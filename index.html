@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mon Livre de Cuisine</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F3EE;--warm-white:#FFFDF9;--terracotta:#B85C38;--sage:#4A5E3A;
+  --gold:#C9A84C;--charcoal:#2C2420;--mid-gray:#7A6A5A;--light-gray:#E8E0D4;
+  --border:#C8B89A;--sand:#DDD5C8;--ivory:#F0EBE3;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--charcoal);font-size:15px;line-height:1.7;}
+
+/* ── COUVERTURE ── */
+.cover{min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;padding:0;}
+.cover-bg{position:absolute;inset:0;background:var(--cream);}
+.cover-bg::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 15% 20%,rgba(200,184,154,.18) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 70%,rgba(74,94,58,.08) 0%,transparent 50%);
+}
+.cover-illustration{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.cover-top-band{position:absolute;top:0;left:0;right:0;height:3px;background:#B85C38;}
+.cover-bot-band{position:absolute;bottom:0;left:0;right:0;height:3px;background:#B85C38;}
+.cover-frame{position:absolute;inset:20px;border:0.5px solid rgba(184,92,56,.35);pointer-events:none;}
+.cover-frame::before{content:'';position:absolute;inset:7px;border:0.5px solid rgba(184,92,56,.18);}
+.cover-content{position:relative;z-index:10;width:100%;padding:44px 30px 56px;background:linear-gradient(to top,rgba(247,243,238,.98) 0%,rgba(247,243,238,.94) 40%,rgba(247,243,238,.72) 68%,transparent 100%);}
+.cover-eyebrow{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:#9A8A78;margin-bottom:16px;display:block;font-weight:300;}
+.cover-title{font-family:'Playfair Display',serif;font-size:clamp(44px,11vw,84px);font-weight:400;color:#2C2420;line-height:1.05;margin-bottom:4px;}
+.cover-title em{font-style:italic;color:var(--terracotta);}
+.cover-line-orn{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 14px;}
+.cover-line-orn::before,.cover-line-orn::after{content:'';display:block;width:50px;height:0.8px;background:var(--terracotta);}
+.cover-orn-dot{width:5px;height:5px;border-radius:50%;background:var(--terracotta);}
+.cover-orn-dot-sm{width:2.5px;height:2.5px;border-radius:50%;background:var(--terracotta);}
+.cover-subtitle{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#9A8A78;margin:0 0 32px;font-weight:300;}
+.cover-stats{display:flex;gap:clamp(20px,5vw,52px);justify-content:center;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:clamp(26px,6vw,40px);color:var(--terracotta);display:block;line-height:1;}
+.stat-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#9A8A78;margin-top:4px;display:block;}
+
+/* ── BARRE DE RECHERCHE ── */
+.search-section{position:sticky;top:0;z-index:200;background:var(--ivory);border-bottom:1px solid var(--sand);}
+.search-collapsed{
+  height:40px;display:flex;align-items:center;gap:12px;
+  padding:0 clamp(16px,5vw,48px);cursor:pointer;
+  transition:background .2s;
+}
+.search-collapsed:hover{background:#E8E0D4;}
+.search-collapsed-icon{color:var(--terracotta);font-size:14px;flex-shrink:0;}
+.search-collapsed-hint{font-family:'Lato',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B8A898;font-weight:300;flex:1;}
+.search-collapsed-arrow{font-size:11px;color:var(--border);transition:transform .25s;}
+.search-collapsed-arrow.open{transform:rotate(90deg);}
+
+.search-expanded{
+  padding:16px clamp(16px,5vw,48px) 18px;
+  border-top:1px solid var(--sand);
+  display:none;
+}
+.search-expanded.visible{display:block;}
+
+.search-field-wrap{display:flex;align-items:center;gap:0;border-bottom:1.5px solid var(--terracotta);padding-bottom:8px;margin-bottom:16px;}
+.search-field-icon{color:var(--terracotta);font-size:14px;margin-right:10px;flex-shrink:0;}
+.search-field{flex:1;background:transparent;border:none;outline:none;font-family:'Lato',sans-serif;font-size:14px;font-weight:300;color:var(--charcoal);letter-spacing:.3px;}
+.search-field::placeholder{color:#B8A898;font-style:italic;}
+.search-close{background:none;border:none;cursor:pointer;color:#B8A898;font-size:13px;padding:2px 4px;line-height:1;transition:color .2s;font-family:'Lato',sans-serif;}
+.search-close:hover{color:var(--terracotta);}
+
+.pills-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.pills-row-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B8A898;font-weight:300;margin-right:4px;white-space:nowrap;flex-shrink:0;}
+.pill{font-family:'Lato',sans-serif;font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:4px 11px;border:0.5px solid var(--border);background:transparent;color:var(--mid-gray);cursor:pointer;transition:all .18s;border-radius:0;}
+.pill:hover{background:var(--light-gray);border-color:#9A8A78;color:var(--charcoal);}
+.pill.active{background:var(--terracotta);border-color:var(--terracotta);color:var(--ivory);}
+.search-results-count{font-size:11px;color:#B8A898;font-style:italic;margin-top:10px;letter-spacing:.5px;display:none;}
+
+/* ── TOC DYNAMIQUE ── */
+.dyn-toc{display:none;background:var(--warm-white);border-top:2px solid var(--terracotta);border-bottom:1px solid var(--sand);padding:14px clamp(16px,5vw,48px) 18px;max-width:100%;}
+.dyn-toc.visible{display:block;}
+.dyn-toc-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--terracotta);font-weight:700;margin-bottom:10px;}
+.dyn-toc-list{display:flex;flex-direction:column;gap:1px;}
+.dyn-toc-link{display:flex;align-items:center;gap:8px;padding:7px 8px;text-decoration:none;color:var(--charcoal);font-size:13px;transition:background .15s;border-bottom:0.5px solid rgba(0,0,0,.04);}
+.dyn-toc-link:hover{background:rgba(74,94,58,.07);color:var(--sage);}
+.dyn-toc-link .dyn-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mid-gray);flex-shrink:0;min-width:62px;}
+.dyn-toc-link .dyn-badges{font-size:12px;margin-left:auto;flex-shrink:0;padding-left:8px;}
+.no-results{text-align:center;padding:60px 24px;display:none;}
+.no-results-icon{font-size:40px;margin-bottom:10px;}
+.no-results-text{font-size:15px;color:var(--mid-gray);}
+
+/* ── TABLE DES MATIÈRES STATIQUE ── */
+.toc{background:var(--warm-white);padding:clamp(40px,8vw,72px) clamp(20px,6vw,56px);max-width:900px;margin:0 auto;border-bottom:1px solid var(--sand);}
+.toc-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--terracotta);margin-bottom:12px;display:block;}
+.toc-main-title{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,34px);color:var(--charcoal);margin-bottom:10px;font-weight:400;}
+.toc-legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 32px;padding:10px 16px;background:var(--ivory);border:0.5px solid var(--sand);}
+.toc-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid-gray);}
+.toc-chapter{margin-bottom:28px;}
+.toc-chapter-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;}
+.toc-chapter-num{font-family:'Playfair Display',serif;font-size:11px;color:var(--border);letter-spacing:2px;text-transform:uppercase;flex-shrink:0;min-width:28px;}
+.toc-chapter-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;color:var(--charcoal);flex:1;}
+.toc-accent{display:block;width:24px;height:1px;background:var(--terracotta);margin:4px 0 10px 40px;}
+.toc-items{padding-left:40px;}
+.toc-subsection{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--border);margin:10px 0 4px;display:block;}
+.toc-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:0.5px dotted var(--sand);text-decoration:none;color:var(--mid-gray);transition:color .2s;font-size:13px;}
+.toc-item:hover{color:var(--terracotta);}
+.toc-item-name{flex:1;}
+.toc-item-badges{font-size:12px;flex-shrink:0;}
+
+/* ── EN-TÊTES DE CHAPITRE ── */
+.cat-section{margin-bottom:8px;}
+.category-header{padding:clamp(44px,8vw,88px) clamp(20px,6vw,56px) clamp(24px,4vw,48px);max-width:900px;margin:0 auto;position:relative;}
+.category-header::before{content:'';position:absolute;left:clamp(20px,6vw,56px);top:clamp(28px,5vw,52px);width:3px;height:44px;border-radius:0;}
+.cat-petitdej  .category-header::before{background:var(--gold);}
+.cat-tartes    .category-header::before{background:var(--terracotta);}
+.cat-salades   .category-header::before{background:#1D9E75;}
+.cat-soupes    .category-header::before{background:#378ADD;}
+.cat-plats     .category-header::before{background:var(--sage);}
+.cat-desserts  .category-header::before{background:#D4537E;}
+.cat-boissons  .category-header::before{background:var(--charcoal);}
+.category-number{font-family:'Playfair Display',serif;font-size:clamp(56px,13vw,110px);color:var(--sand);line-height:1;position:absolute;right:clamp(20px,6vw,56px);top:clamp(16px,3vw,32px);font-weight:700;}
+.category-title{font-family:'Playfair Display',serif;font-size:clamp(32px,7vw,62px);font-weight:400;line-height:1.1;margin-top:18px;}
+.cat-petitdej  .category-title{color:var(--gold);}
+.cat-tartes    .category-title{color:var(--terracotta);}
+.cat-salades   .category-title{color:#0F6E56;}
+.cat-soupes    .category-title{color:#185FA5;}
+.cat-plats     .category-title{color:var(--sage);}
+.cat-desserts  .category-title{color:#993556;}
+.cat-boissons  .category-title{color:var(--charcoal);}
+.category-desc{font-size:14px;color:var(--mid-gray);max-width:460px;margin-top:14px;font-style:italic;font-family:'Playfair Display',serif;}
+
+/* ── SOUS-SECTIONS ── */
+.subsection-label{padding:14px clamp(12px,4vw,60px) 4px;max-width:900px;margin:0 auto;}
+.subsection-label span{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--border);display:inline-block;padding-bottom:6px;border-bottom:0.5px solid var(--sand);}
+
+/* ── CARTES RECETTES ── */
+.recipe-wrapper{max-width:900px;margin:0 auto;padding:0 clamp(12px,4vw,56px);}
+.recipe{background:var(--warm-white);border:0.5px solid var(--sand);margin-bottom:36px;overflow:hidden;transition:box-shadow .3s;display:block;}
+.recipe:hover{box-shadow:0 4px 24px rgba(44,36,32,.06);}
+.recipe.hidden{display:none;}
+.recipe-header{padding:clamp(16px,4vw,32px) clamp(16px,4vw,36px) clamp(12px,3vw,24px);border-bottom:0.5px solid var(--light-gray);display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.recipe-meta-top{flex:1;min-width:200px;}
+.recipe-tag{display:inline-block;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;padding:3px 9px;margin-bottom:9px;font-weight:700;border-radius:0;}
+.tag-plat{background:rgba(74,94,58,.1);color:#3B6D11;}
+.tag-entree{background:rgba(184,92,56,.09);color:#993C1D;}
+.tag-dessert{background:rgba(212,83,126,.1);color:#72243E;}
+.tag-boisson{background:rgba(44,36,32,.07);color:var(--charcoal);}
+.tag-petit-dej{background:rgba(201,168,76,.13);color:#854F0B;}
+.tag-quiche,.tag-tarte{background:rgba(184,92,56,.09);color:#993C1D;}
+.tag-salade,.tag-ceviche{background:rgba(29,158,117,.1);color:#0F6E56;}
+.tag-soupe,.tag-veloute{background:rgba(55,138,221,.1);color:#185FA5;}
+.tag-sauce{background:rgba(44,36,32,.07);color:var(--charcoal);}
+.recipe-title{font-family:'Playfair Display',serif;font-size:clamp(17px,3.5vw,24px);font-weight:400;color:var(--charcoal);line-height:1.25;margin-bottom:5px;}
+.recipe-subtitle{font-size:13px;color:var(--mid-gray);font-style:italic;font-family:'Playfair Display',serif;}
+.recipe-diet-icons{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.diet-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;font-weight:700;border-radius:0;}
+.diet-veg{background:rgba(74,94,58,.1);color:#27500A;}
+.diet-gf{background:rgba(201,168,76,.13);color:#633806;}
+.diet-crowd{background:rgba(184,92,56,.09);color:#993C1D;}
+.recipe-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+@media(max-width:540px){.recipe-badges{flex-direction:row;align-items:center;flex-wrap:wrap;justify-content:flex-start;}}
+.badge{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--mid-gray);white-space:nowrap;}
+.recipe-body{display:grid;grid-template-columns:200px 1fr;}
+@media(max-width:580px){.recipe-body{grid-template-columns:1fr;}}
+.recipe-ingredients{padding:clamp(14px,3vw,24px) clamp(14px,3vw,24px) clamp(14px,3vw,24px) clamp(16px,4vw,36px);background:var(--ivory);border-right:0.5px solid var(--light-gray);}
+@media(max-width:580px){.recipe-ingredients{border-right:none;border-bottom:0.5px solid var(--light-gray);}}
+.ingredients-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--mid-gray);margin-bottom:12px;font-weight:700;}
+.ingredient-item{display:flex;gap:7px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,.04);font-size:13px;line-height:1.4;align-items:baseline;}
+.ingredient-item:last-child{border-bottom:none;}
+.ingredient-qty{color:var(--terracotta);font-weight:700;min-width:44px;font-size:11px;}
+.ingredient-name{color:var(--charcoal);}
+.recipe-steps{padding:clamp(14px,3vw,24px) clamp(16px,4vw,36px);}
+.steps-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--mid-gray);margin-bottom:16px;font-weight:700;}
+.step{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start;}
+.step-num{width:22px;height:22px;border-radius:50%;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.cat-petitdej  .step-num{background:var(--gold);}
+.cat-tartes    .step-num{background:var(--terracotta);}
+.cat-salades   .step-num{background:#1D9E75;}
+.cat-soupes    .step-num{background:#378ADD;}
+.cat-plats     .step-num{background:var(--sage);}
+.cat-desserts  .step-num{background:#D4537E;}
+.cat-boissons  .step-num{background:var(--charcoal);}
+.step-text{font-size:14px;color:var(--charcoal);line-height:1.7;flex:1;}
+.recipe-note{margin:0 clamp(16px,4vw,36px) clamp(14px,3vw,24px);padding:10px 14px;border-left:2px solid var(--gold);background:rgba(201,168,76,.06);font-size:13px;color:var(--mid-gray);font-style:italic;font-family:'Playfair Display',serif;border-radius:0;}
+.recipe-nutrition{padding:12px clamp(16px,4vw,36px);background:var(--ivory);border-top:0.5px solid var(--light-gray);display:flex;gap:18px;flex-wrap:wrap;}
+.nutr-item{font-size:11px;color:var(--mid-gray);}
+.nutr-val{font-weight:700;color:var(--charcoal);}
+
+/* ── BOUTON FAB ── */
+.back-toc-btn{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--sage);color:var(--ivory);border:none;padding:12px 18px;font-family:'Lato',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 3px 16px rgba(74,94,58,.4);border-radius:0;display:flex;align-items:center;gap:7px;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .2s ease,background .2s ease;}
+.back-toc-btn:hover{background:#3B5030;transform:translateY(-2px);}
+@media(max-width:580px){.back-toc-btn{bottom:16px;right:16px;padding:10px 13px;}}
+
+/* ── 4ÈME DE COUVERTURE ── */
+.back-cover{background:var(--charcoal);padding:clamp(44px,8vw,72px) clamp(24px,6vw,56px);text-align:center;margin-top:56px;}
+.back-cover-text{font-family:'Playfair Display',serif;font-size:clamp(15px,3.5vw,20px);font-style:italic;color:rgba(247,243,238,.5);max-width:460px;margin:0 auto;}
+.back-cover-line{width:40px;height:1px;background:var(--terracotta);margin:20px auto;}
+.back-cover-sig{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(200,184,154,.6);}
+
+@media print{.back-toc-btn,.search-section{display:none;}.cover{min-height:100vh;page-break-after:always;}.toc{page-break-after:always;}.category-header{page-break-before:always;}.recipe{page-break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- COUVERTURE -->
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-illustration">
+    <svg viewBox="0 0 680 920" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+      <g opacity="0.20">
+        <path d="M 520 30 Q 540 120 510 220 Q 490 300 515 380" stroke="#4A5E3A" stroke-width="1.2" fill="none"/>
+        <ellipse cx="532" cy="90"  rx="18" ry="8"  fill="#4A5E3A" transform="rotate(-40 532 90)"/>
+        <ellipse cx="505" cy="155" rx="22" ry="9"  fill="#4A5E3A" transform="rotate(30 505 155)"/>
+        <ellipse cx="530" cy="200" rx="16" ry="7"  fill="#4A5E3A" transform="rotate(-55 530 200)"/>
+        <ellipse cx="500" cy="255" rx="20" ry="8"  fill="#4A5E3A" transform="rotate(20 500 255)"/>
+        <ellipse cx="525" cy="310" rx="18" ry="7"  fill="#4A5E3A" transform="rotate(-45 525 310)"/>
+        <ellipse cx="505" cy="360" rx="14" ry="6"  fill="#4A5E3A" transform="rotate(35 505 360)"/>
+      </g>
+      <g opacity="0.14">
+        <path d="M 160 560 Q 140 620 155 700 Q 165 750 145 800" stroke="#4A5E3A" stroke-width="1.0" fill="none"/>
+        <ellipse cx="145" cy="595" rx="15" ry="6"  fill="#4A5E3A" transform="rotate(50 145 595)"/>
+        <ellipse cx="165" cy="645" rx="18" ry="7"  fill="#4A5E3A" transform="rotate(-30 165 645)"/>
+        <ellipse cx="143" cy="700" rx="14" ry="6"  fill="#4A5E3A" transform="rotate(40 143 700)"/>
+        <ellipse cx="160" cy="755" rx="16" ry="6"  fill="#4A5E3A" transform="rotate(-20 160 755)"/>
+      </g>
+      <line x1="80" y1="148" x2="600" y2="148" stroke="#C8B89A" stroke-width="0.5"/>
+      <line x1="80" y1="772" x2="600" y2="772" stroke="#C8B89A" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <div class="cover-top-band"></div>
+  <div class="cover-bot-band"></div>
+  <div class="cover-frame"></div>
+  <div class="cover-content">
+    <span class="cover-eyebrow">Collection personnelle · 2026</span>
+    <h1 class="cover-title">Mon Livre de<br><em>Cuisine</em></h1>
+    <div class="cover-line-orn">
+      <div class="cover-orn-dot-sm"></div>
+      <div class="cover-orn-dot"></div>
+      <div class="cover-orn-dot-sm"></div>
+    </div>
+    <p class="cover-subtitle">Recettes végétales · Poissons · Volaille · Douceurs</p>
+    <div class="cover-stats">
+      <div class="stat"><span class="stat-num">28</span><span class="stat-label">Recettes</span></div>
+      <div class="stat"><span class="stat-num">VII</span><span class="stat-label">Chapitres</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BARRE DE RECHERCHE -->
+<div class="search-section" id="searchSection">
+  <div class="search-collapsed" id="searchToggle" onclick="toggleSearch()" role="button" aria-expanded="false" aria-controls="searchExpanded">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span class="search-collapsed-hint">Rechercher une recette ou un ingrédient</span>
+    <span class="search-collapsed-arrow" id="searchArrow">›</span>
+  </div>
+  <div class="search-expanded" id="searchExpanded">
+    <div class="search-field-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0;margin-right:10px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-field" id="searchInput" type="text" placeholder="poireaux, citron, végétarien…" autocomplete="off">
+      <button class="search-close" id="searchClear" onclick="clearSearch()" aria-label="Effacer">✕</button>
+    </div>
+    <div class="pills-row">
+      <span class="pills-row-label">Filtres</span>
+      <button class="pill active" data-filter="all">Toutes</button>
+      <button class="pill" data-filter="veg">🌿 Végétarien</button>
+      <button class="pill" data-filter="crowd">👨‍👩‍👧‍👦 Grand nombre</button>
+      <button class="pill" data-filter="petitdej">Petit-déjeuner</button>
+      <button class="pill" data-filter="tarte">Quiches &amp; tartes</button>
+      <button class="pill" data-filter="salade">Salades</button>
+      <button class="pill" data-filter="soupe">Soupes</button>
+      <button class="pill" data-filter="plat">Plats</button>
+      <button class="pill" data-filter="dessert">Desserts</button>
+      <button class="pill" data-filter="boisson">Boissons</button>
+      <button class="pill" data-filter="rapide">⚡ Rapide</button>
+    </div>
+    <div class="search-results-count" id="resultsCount"></div>
+  </div>
+</div>
+
+<!-- TOC DYNAMIQUE -->
+<div class="dyn-toc" id="dynToc">
+  <div class="dyn-toc-title" id="dynTocTitle"></div>
+  <div class="dyn-toc-list" id="dynTocList"></div>
+</div>
+
+<!-- TABLE DES MATIÈRES STATIQUE -->
+<div class="toc" id="toc">
+  <span class="toc-eyebrow">Sommaire</span>
+  <h2 class="toc-main-title">Table des matières</h2>
+  <div class="toc-legend">
+    <div class="toc-legend-item"><span>🌿</span> Végétarien</div>
+    <div class="toc-legend-item"><span>👨‍👩‍👧‍👦</span> 6 pers. et +</div>
+    <div class="toc-legend-item"><span>⚡</span> Rapide (&lt;30 min)</div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">I</span><span class="toc-chapter-title">Petit-déjeuner &amp; brunch</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <a href="#overnight-oats" class="toc-item"><span class="toc-item-name">Overnight oats &amp; chia au lait végétal</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#chia-pudding" class="toc-item"><span class="toc-item-name">Chia pudding et ses déclinaisons</span><span class="toc-item-badges">🌿 ⚡</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">II</span><span class="toc-chapter-title">Quiches &amp; tartes salées</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <a href="#tarte-poireaux" class="toc-item"><span class="toc-item-name">Tarte fine aux poireaux et champignons</span><span class="toc-item-badges">🌿</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">III</span><span class="toc-chapter-title">Salades &amp; ceviche</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <span class="toc-subsection">Poissons &amp; fruits de mer</span>
+      <a href="#ceviche-base" class="toc-item"><span class="toc-item-name">Ceviche de base</span><span class="toc-item-badges">👨‍👩‍👧‍👦</span></a>
+      <a href="#ceviche-saint-jacques" class="toc-item"><span class="toc-item-name">Ceviche de Saint-Jacques à la passion</span><span class="toc-item-badges"></span></a>
+      <a href="#ceviche-sebastes" class="toc-item"><span class="toc-item-name">Ceviche de sébaste à la péruvienne</span><span class="toc-item-badges"></span></a>
+      <a href="#ceviche-cabillaud" class="toc-item"><span class="toc-item-name">Ceviche de cabillaud à la patate douce</span><span class="toc-item-badges">👨‍👩‍👧‍👦</span></a>
+      <a href="#carpaccio-bar" class="toc-item"><span class="toc-item-name">Carpaccio de bar au fenouil</span><span class="toc-item-badges"></span></a>
+      <a href="#carpaccio-saumon" class="toc-item"><span class="toc-item-name">Carpaccio de saumon au gingembre</span><span class="toc-item-badges"></span></a>
+      <a href="#saumon-curry" class="toc-item"><span class="toc-item-name">Saumon mariné au curry</span><span class="toc-item-badges"></span></a>
+      <span class="toc-subsection">Végétarien</span>
+      <a href="#ceviche-betterave" class="toc-item"><span class="toc-item-name">Ceviche de betterave crue</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#carpaccio-courgettes" class="toc-item"><span class="toc-item-name">Carpaccio de courgettes aux pignons grillés</span><span class="toc-item-badges">🌿</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">IV</span><span class="toc-chapter-title">Soupes &amp; veloutés</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <a href="#veloute-chou" class="toc-item"><span class="toc-item-name">Velouté de chou blanc au gingembre et curcuma</span><span class="toc-item-badges">🌿</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">V</span><span class="toc-chapter-title">Plats principaux</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <span class="toc-subsection">Viandes &amp; volailles</span>
+      <a href="#gratin-patate" class="toc-item"><span class="toc-item-name">Gratin de patate douce, poulet et coriandre</span><span class="toc-item-badges"></span></a>
+      <a href="#boulettes-poulet" class="toc-item"><span class="toc-item-name">Boulettes de poulet à la sauge, feta &amp; tomates séchées</span><span class="toc-item-badges"></span></a>
+      <span class="toc-subsection">Poissons</span>
+      <a href="#carpaccio-saumon" class="toc-item"><span class="toc-item-name">Carpaccio de saumon au gingembre</span><span class="toc-item-badges"></span></a>
+      <a href="#saumon-curry" class="toc-item"><span class="toc-item-name">Saumon mariné au curry</span><span class="toc-item-badges"></span></a>
+      <span class="toc-subsection">Végétarien</span>
+      <a href="#nouilles-cajou" class="toc-item"><span class="toc-item-name">Nouilles sautées aux noix de cajou</span><span class="toc-item-badges">🌿</span></a>
+      <a href="#terrine-shiitakes" class="toc-item"><span class="toc-item-name">Terrine végétale aux shiitakés</span><span class="toc-item-badges">🌿 👨‍👩‍👧‍👦</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">VI</span><span class="toc-chapter-title">Desserts &amp; douceurs</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <a href="#confiture-poires" class="toc-item"><span class="toc-item-name">Confiture de poires (presque) sans sucre</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#clementine-curd" class="toc-item"><span class="toc-item-name">Clémentine curd sans œufs</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#cookies" class="toc-item"><span class="toc-item-name">Cookies américains noisette et chocolat</span><span class="toc-item-badges">🌿</span></a>
+      <a href="#framboises-verveine" class="toc-item"><span class="toc-item-name">Framboises à la verveine</span><span class="toc-item-badges">🌿</span></a>
+      <a href="#carpaccio-pommes" class="toc-item"><span class="toc-item-name">Carpaccio de pommes au chèvre</span><span class="toc-item-badges">🌿</span></a>
+    </div>
+  </div>
+
+  <div class="toc-chapter">
+    <div class="toc-chapter-head"><span class="toc-chapter-num">VII</span><span class="toc-chapter-title">Boissons &amp; sauces</span></div>
+    <span class="toc-accent"></span>
+    <div class="toc-items">
+      <span class="toc-subsection">Boissons</span>
+      <a href="#chia-fresca" class="toc-item"><span class="toc-item-name">Chia fresca</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#supergreen" class="toc-item"><span class="toc-item-name">Supergreen smoothie</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#pisco-sour" class="toc-item"><span class="toc-item-name">Pisco sour</span><span class="toc-item-badges">⚡</span></a>
+      <span class="toc-subsection">Sauces &amp; bases</span>
+      <a href="#leche-tigre" class="toc-item"><span class="toc-item-name">Lèche de tigre</span><span class="toc-item-badges"></span></a>
+      <a href="#vinaigrette-chia" class="toc-item"><span class="toc-item-name">Vinaigrette sans huile aux agrumes</span><span class="toc-item-badges">🌿 ⚡</span></a>
+      <a href="#tapenades-pesto" class="toc-item"><span class="toc-item-name">Tapenades &amp; pesto</span><span class="toc-item-badges">🌿</span></a>
+    </div>
+  </div>
+</div>
+
+
+<div class="cat-section cat-petitdej" id="ch-I">
+  <div class="category-header">
+    <span class="section-label">Chapitre I</span>
+    <div class="category-number">I</div>
+    <h2 class="category-title">Petit-déjeuner<br>&amp; brunch</h2>
+    <p class="category-desc">Préparer la journée avec des recettes légères, riches en fibres et en énergie.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="subsection-label"><span></span></div><div class="recipe" id="overnight-oats" data-tags="petit-dejeuner vegetarien veg avoine chia lait vegetal coco amande rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-petit-dej">Petit-déjeuner · Végétarien</span>
+  <h3 class="recipe-title">Overnight oats &amp; chia au lait végétal</h3>
+  <p class="recipe-subtitle">Flocons d'avoine et chia gonflés toute la nuit, à garnir de fruits</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 1 bol</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 5 min prép.</div>
+  <div class="badge"><span class="badge-icon">🌙</span> 1 nuit repos</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">lait de coco</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">eau de coco</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">— ou —</span><span class="ingredient-name">10 c.à.s. lait d'amande</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4 c.à.s.</span><span class="ingredient-name">flocons d'avoine bio</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">miel d'acacia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">fruits frais ou coulis</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Dans un bocal, mélanger le lait et/ou l'eau de coco avec le miel.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Ajouter les flocons d'avoine et les graines de chia. Bien mélanger. Parsemer de fruits.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Fermer le bocal et réserver au réfrigérateur. Le chia et l'avoine absorbent le liquide pendant la nuit.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Le lendemain, ajouter du lait végétal si besoin pour ajuster la consistance. Déguster !</div></div>
+</div></div>
+</div><div class="recipe" id="chia-pudding" data-tags="petit-dejeuner dessert vegetarien veg chia pudding lait vegetal rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien</span>
+  <h3 class="recipe-title">Chia pudding et ses déclinaisons</h3>
+  <p class="recipe-subtitle">Le petit-déjeuner star déclinable en quatre saisons</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 1 bol</div>
+  <div class="badge"><span class="badge-icon">🌙</span> Prép. la veille</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Base</div>
+  <div class="ingredient-item"><span class="ingredient-qty">250 ml</span><span class="ingredient-name">lait végétal au choix</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">25 g</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">édulcorant (agave, sirop d'érable…)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 pincée</span><span class="ingredient-name">épices (vanille, cannelle…)</span></div>
+  <div class="ingredients-title" style="margin-top:12px">Variantes saisonnières</div>
+  <div class="ingredient-item"><span class="ingredient-qty">🌸</span><span class="ingredient-name">Printemps : amande, gingembre, pollen</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">☀️</span><span class="ingredient-name">Été : coco + riz, matcha, fruits rouges</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">🍂</span><span class="ingredient-name">Automne : amande + riz, figues, noix</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">❄️</span><span class="ingredient-name">Hiver : avoine, cacao, poire</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">La veille : mélanger lait, édulcorant, épices et chia dans un bol.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Laisser prendre 20 min en mélangeant toutes les 5 min pour une texture crémeuse. Couvrir et réfrigérer toute la nuit.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Le matin, garnir de fruits frais selon la saison et déguster.</div></div>
+</div></div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-tartes" id="ch-II">
+  <div class="category-header">
+    <span class="section-label">Chapitre II</span>
+    <div class="category-number">II</div>
+    <h2 class="category-title">Quiches &amp;<br>tartes salées</h2>
+    <p class="category-desc">La pâte feuilletée et ses garnitures de saison, du four à la table.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="recipe" id="tarte-poireaux" data-tags="quiche tarte vegetarien veg poireaux champignons creme muscade" data-diet="veg" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Entrée · Végétarien</span>
+  <h3 class="recipe-title">Tarte fine aux poireaux et champignons</h3>
+  <p class="recipe-subtitle">Une tarte légère aux poireaux fondants, parfaite avec une salade verte</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 10 min prép.</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 40 min cuisson</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">pâte feuilletée</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">150 g</span><span class="ingredient-name">champignons de Paris</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2–3</span><span class="ingredient-name">poireaux selon taille</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">10 cl</span><span class="ingredient-name">crème liquide</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">muscade moulue</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">persil ciselé</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Débarrasser les poireaux de leurs extrémités, couper en deux dans la longueur, tailler en morceaux et rincer.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Faire revenir dans une poêle avec l'huile, la muscade, sel et poivre. Cuire 10 min à feu moyen et à couvert.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Ajouter la crème et poursuivre 5 min à feu moyen en remuant.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Préchauffer le four à 180°C chaleur tournante. Étaler la pâte, piquer à la fourchette et précuire pendant le préchauffage.</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-text">Émincer les champignons. Étaler les poireaux sur la pâte. Enfourner à mi-hauteur 20 min.</div></div>
+  <div class="step"><div class="step-num">6</div><div class="step-text">Parsemer champignons et persil, enfourner encore 5 min. Servir aussitôt.</div></div>
+</div></div>
+<div class="recipe-note">💡 Ajoutez quelques noisettes concassées avec les champignons pour une touche croquante.</div>
+<div class="recipe-nutrition"><span class="nutr-item">Calories : <span class="nutr-val">494 kcal</span></span><span class="nutr-item">Glucides : <span class="nutr-val">36 g</span></span><span class="nutr-item">Protéines : <span class="nutr-val">7 g</span></span><span class="nutr-item">Lipides : <span class="nutr-val">37 g</span></span></div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-salades" id="ch-III">
+  <div class="category-header">
+    <span class="section-label">Chapitre III</span>
+    <div class="category-number">III</div>
+    <h2 class="category-title">Salades &amp;<br>ceviche</h2>
+    <p class="category-desc">Fraîcheur, acidité, croquant — du jardin à l'assiette, parfois sans cuisson.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="subsection-label"><span>Poissons &amp; fruits de mer</span></div><div class="recipe" id="ceviche-base" data-tags="salade ceviche poisson bar citron piment oignon grand nombre" data-diet="gf" data-crowd="6">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Entrée · Poisson cru</span>
+  <h3 class="recipe-title">Ceviche de base</h3>
+  <p class="recipe-subtitle">La recette fondatrice du ceviche péruvien, fraîche et acidulée</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-crowd">👨‍👩‍👧‍👦 6 personnes</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 6 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 10 min + 20 min marinade</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">750 g</span><span class="ingredient-name">filets de bar</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">citrons jaunes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4</span><span class="ingredient-name">citrons verts + zestes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">6</span><span class="ingredient-name">oignons verts émincés</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4</span><span class="ingredient-name">petits piments aji hachés</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">sel fin</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Envelopper les filets dans du film alimentaire. Placer 20 min au congélateur.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Presser les citrons dans un saladier, dissoudre sel et poivre. Ajouter oignons et piments. Mariner 20 min.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Couper le bar ferme en cubes de 2–3 cm. Ajouter à la marinade, mélanger délicatement. Servir aussitôt.</div></div>
+</div></div>
+<div class="recipe-note">💡 Testez les piments avant de les doser — leur force est très variable selon la variété.</div>
+</div><div class="recipe" id="ceviche-saint-jacques" data-tags="salade ceviche fruits de mer saint-jacques passion citron orange" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Entrée · Fruits de mer</span>
+  <h3 class="recipe-title">Ceviche de Saint-Jacques à la passion</h3>
+  <p class="recipe-subtitle">Noix en fines tranches, marinade d'agrumes et pulpe de fruit de la passion</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min prép.</div>
+  <div class="badge"><span class="badge-icon">🌿</span> 30 min réfrigération</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">12</span><span class="ingredient-name">saint-jacques fraîches</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">fruits de la passion</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">¼ botte</span><span class="ingredient-name">coriandre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+  <div class="ingredients-title" style="margin-top:12px">Marinade</div>
+  <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">pamplemousse</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">oranges + 1 citron vert</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">clémentine + 1 gousse d'ail</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Presser tous les agrumes, hacher l'ail finement. Laisser infuser 30 min au réfrigérateur.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Nettoyer les saint-jacques, enlever le corail. Couper en fines tranches d'environ 2 mm.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Disposer 3 noix par assiette. Filtrer la marinade et la verser dessus. Ajouter la pulpe de passion.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Ciseler la coriandre, ajouter l'huile, fleur de sel et tour de moulin à poivre.</div></div>
+</div></div>
+</div><div class="recipe" id="ceviche-sebastes" data-tags="salade ceviche poisson sebastes peruvien mais patate douce citron coriandre gingembre" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson</span>
+  <h3 class="recipe-title">Ceviche de sébaste à la péruvienne</h3>
+  <p class="recipe-subtitle">Poisson blanc mariné, maïs cancha grillé et patate douce</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min + 20 min repos</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">~600 g</span><span class="ingredient-name">sébaste (filets)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">patate douce</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">100 g</span><span class="ingredient-name">maïs cancha (ou pop-corn salé)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">branches de céleri</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">oignon rouge</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 cm</span><span class="ingredient-name">gingembre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">15</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">¼ botte</span><span class="ingredient-name">coriandre</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Préparer la marinade : jus de citron, sel et poivre dans un saladier.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Couper céleri, ail et gingembre en petits dés. Émincer l'oignon. Couper le sébaste en dés d'1 cm. Mélanger et mariner 20 min au frais.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Griller le maïs dans une poêle sèche 8–10 min jusqu'à dorure. Cuire les dés de patate douce 15 min dans l'eau bouillante.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Dresser le ceviche dans les assiettes avec les patates douces, le maïs et la coriandre ciselée.</div></div>
+</div></div>
+</div><div class="recipe" id="ceviche-cabillaud" data-tags="plat poisson cabillaud patate douce ceviche citron piment grand nombre" data-diet="gf" data-crowd="6">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson</span>
+  <h3 class="recipe-title">Ceviche de cabillaud à la patate douce</h3>
+  <p class="recipe-subtitle">Cabillaud mariné aux agrumes, accompagné de patates douces</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-crowd">👨‍👩‍👧‍👦 6 personnes</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 6 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 10 min + 20 min marinade</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">750 g</span><span class="ingredient-name">filets de cabillaud</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">300 g</span><span class="ingredient-name">patates douces</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">oranges (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">oignon rouge émincé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">3</span><span class="ingredient-name">petits piments frais hachés</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">graines de coriandre</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Congeler les filets 20 min dans du film alimentaire pour les raffermir.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Cuire les patates douces en cubes 10 min dans l'eau salée.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Préparer la marinade : jus d'agrumes, sel, poivre, coriandre, oignon, piments. Laisser 20 min.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Couper le cabillaud ferme en cubes. Mélanger délicatement avec patates et marinade. Servir aussitôt.</div></div>
+</div></div>
+</div><div class="recipe" id="carpaccio-bar" data-tags="salade carpaccio poisson bar fenouil aneth citron vin blanc" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Entrée · Poisson cru</span>
+  <h3 class="recipe-title">Carpaccio de bar au fenouil</h3>
+  <p class="recipe-subtitle">Fines tranches de bar marinées à l'aneth et au vin blanc</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min + 30 min congélation</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">600 g</span><span class="ingredient-name">filets de bar (sans peau)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 petit</span><span class="ingredient-name">bulbe de fenouil</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">citron (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">¼ c.à.c.</span><span class="ingredient-name">graines d'aneth</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">vin blanc</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Envelopper les filets de film alimentaire, placer 30 min au congélateur.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Mélanger citron, aneth, vin blanc, ail, sucre, sel, poivre et huile d'olive.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Couper le poisson en très fines lamelles. Disposer dans les assiettes. Ajouter le fenouil et ses brins. Verser l'assaisonnement au service.</div></div>
+</div></div>
+<div class="recipe-note">💡 En saison, les brins d'aneth frais remplacent avantageusement les graines.</div>
+</div><div class="recipe" id="carpaccio-saumon" data-tags="salade carpaccio poisson saumon gingembre citron vert" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson cru</span>
+  <h3 class="recipe-title">Carpaccio de saumon au gingembre</h3>
+  <p class="recipe-subtitle">Fines lamelles de saumon au jus de citron vert et gingembre râpé</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min + 30 min congélation</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">400 g</span><span class="ingredient-name">saumon (pavé ou filet)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2–4 cm</span><span class="ingredient-name">gingembre frais râpé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">sauce soja douce (à part)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">sel</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Placer le saumon 30 min au congélateur. Couper en très fines lamelles. Disposer dans les assiettes.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Saupoudrer de gingembre râpé, arroser de citron vert et d'huile d'olive. Saler.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Servir avec la sauce soja en accompagnement, que chacun dose à sa guise.</div></div>
+</div></div>
+<div class="recipe-note">💡 L'assaisonnement se prête parfaitement à un riz, dégusté avec des baguettes.</div>
+</div><div class="recipe" id="saumon-curry" data-tags="salade poisson saumon curry marinade poivrons avocat" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson mariné</span>
+  <h3 class="recipe-title">Saumon mariné au curry</h3>
+  <p class="recipe-subtitle">Saumon gravlax au curry, poivrons rôtis et avocat</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">🌙</span> 1 nuit + 2 h réfrig.</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">600 g</span><span class="ingredient-name">filet de saumon</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">sucre + 4 c.à.s. gros sel</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">poivrons rouges</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">tomate, 1 avocat</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">curry</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">citron non traité</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">aneth, piment de Cayenne, ciboulette</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">La veille : recouvrir le saumon de gros sel, sucre et poivre. Réfrigérer 1 nuit.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Griller les poivrons 20 min côté peau, enfermer 30 min dans un sac, peler. Couper en lamelles, réfrigérer.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Mélanger jus et zeste de citron, curry, ciboulette, Cayenne, aneth, sel et poivre. Verser sur poivrons et tomate.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Rincer le saumon, couper en dés, mariner 2 h au frais. Ajouter l'avocat coupé au service.</div></div>
+</div></div>
+</div><div class="subsection-label"><span>Végétarien</span></div><div class="recipe" id="ceviche-betterave" data-tags="salade ceviche vegetarien veg betterave pomme feta citron coriandre rapide" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Entrée · Végétarien</span>
+  <h3 class="recipe-title">Ceviche de betterave crue</h3>
+  <p class="recipe-subtitle">Betteraves marinées au citron vert, pomme granny et feta émiettée</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 10 min prép.</div>
+  <div class="badge"><span class="badge-icon">🌿</span> 2 h repos</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">betterave rouge crue</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">betterave chiogga crue</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">pomme granny-smith</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">50 g</span><span class="ingredient-name">feta</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ botte</span><span class="ingredient-name">coriandre ciselée</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">3 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Trancher les betteraves à la mandoline. Mariner dans le jus des citrons verts et l'huile d'olive pendant 2 h.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Couper la pomme en fines tranches à la mandoline (avec la peau), épépiner.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Répartir en alternant les couleurs. Émietter la feta, ajouter zeste, huile, fleur de sel et poivre.</div></div>
+</div></div>
+</div><div class="recipe" id="carpaccio-courgettes" data-tags="salade carpaccio vegetarien veg courgettes pignons parmesan citron" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Entrée / Dessert · Végétarien</span>
+  <h3 class="recipe-title">Carpaccio de courgettes aux pignons grillés</h3>
+  <p class="recipe-subtitle">Très fines rondelles de courgettes, pignons croustillants et copeaux de parmesan</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 30 min + 30 min réfrig.</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">courgettes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">200 g</span><span class="ingredient-name">pignons de pin</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">100 g</span><span class="ingredient-name">parmesan</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">citron (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">3 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Trancher les courgettes à la mandoline au plus fin. Disposer dans les assiettes.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Faire griller les pignons à sec en remuant. Répartir sur les courgettes. Arroser de citron. Réfrigérer 30 min.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Au service, ajouter des copeaux de parmesan, sel, poivre et huile d'olive.</div></div>
+</div></div>
+<div class="recipe-note">💡 Quelques feuilles de ciboulette et de l'ail dans l'assaisonnement parfumeront encore davantage ce plat.</div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-soupes" id="ch-IV">
+  <div class="category-header">
+    <span class="section-label">Chapitre IV</span>
+    <div class="category-number">IV</div>
+    <h2 class="category-title">Soupes &amp;<br>veloutés</h2>
+    <p class="category-desc">Des bols chauds et réconfortants, épicés ou doux selon la saison.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="recipe" id="veloute-chou" data-tags="soupe veloute vegetarien veg chou gingembre curcuma rapide" data-diet="veg gf" data-crowd="3">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Végétarien</span>
+  <h3 class="recipe-title">Velouté de chou blanc au gingembre et curcuma</h3>
+  <p class="recipe-subtitle">Soupe veloutée, douce et épicée, économique et pleine de saveurs</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 2–3 personnes</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 25 min cuisson</div>
+  <div class="badge"><span class="badge-icon">💚</span> Économique</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">300 g</span><span class="ingredient-name">chou blanc</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">pomme de terre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">oignon</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">10 g</span><span class="ingredient-name">gingembre frais râpé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ c.à.c.</span><span class="ingredient-name">curcuma en poudre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">450 ml</span><span class="ingredient-name">bouillon de légumes chaud</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">50 ml</span><span class="ingredient-name">crème liquide (ou lait de coco)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">jus de citron, graines de courge</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Faire revenir l'oignon 3 min dans l'huile. Ajouter gingembre et curcuma, mélanger 1 min.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Ajouter le chou et la pomme de terre en dés. Verser le bouillon. Cuire 25 min à feu moyen.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Mixer jusqu'à texture lisse. Incorporer la crème et le jus de citron. Rectifier l'assaisonnement.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Servir dans des bols chauds avec graines de courge et filet d'huile d'olive.</div></div>
+</div></div>
+<div class="recipe-note">💡 Le lait de coco donne une touche exotique très agréable en remplacement de la crème.</div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-plats" id="ch-V">
+  <div class="category-header">
+    <span class="section-label">Chapitre V</span>
+    <div class="category-number">V</div>
+    <h2 class="category-title">Plats<br>principaux</h2>
+    <p class="category-desc">Des recettes généreuses, structurées en trois familles selon l'envie.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="subsection-label"><span>Viandes &amp; volailles</span></div><div class="recipe" id="gratin-patate" data-tags="plat viande poulet patate douce coco coriandre gratin" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat</span>
+  <h3 class="recipe-title">Gratin de patate douce, poulet et coriandre</h3>
+  <p class="recipe-subtitle">Purée soyeuse de patate douce à la crème de coco, sur lit de poulet effiloché</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min prép.</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 35 min cuisson</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">2–3</span><span class="ingredient-name">patates douces (bio)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">poulet rôti (restes) ou 3 escalopes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">10 cl</span><span class="ingredient-name">crème de coco</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">oignon rouge</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">gousse d'ail</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">coriandre fraîche</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">sauce Tamari (ou soja)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">fromage râpé (Manchego)</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Faire revenir l'oignon émincé et l'ail haché dans l'huile jusqu'à ce que les oignons soient fondants. Réserver dans le plat à gratin.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Cuire les cubes de patates douces 15–20 min dans l'eau bouillante salée jusqu'à tendreté.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Effilocher le poulet. Dans le plat, mélanger oignon, coriandre, poulet et Tamari. Étaler uniformément.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Mixer les patates égouttées avec huile et crème de coco jusqu'à texture ultra soyeuse. Saler.</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-text">Étaler la purée sur le mélange poulet, parsemer de fromage râpé. Griller à 200°C environ 10 min.</div></div>
+</div></div>
+</div><div class="recipe" id="boulettes-poulet" data-tags="plat viande poulet boulettes sauge feta tomates sechees noisettes" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Volaille</span>
+  <h3 class="recipe-title">Boulettes de poulet à la sauge,<br>feta &amp; tomates séchées</h3>
+  <p class="recipe-subtitle">Boulettes moelleuses aux parfums méditerranéens, servies avec sauce au yaourt</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 15 min à 200°C</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">250 g</span><span class="ingredient-name">poulet fermier</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">60 g</span><span class="ingredient-name">feta</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">6</span><span class="ingredient-name">tomates séchées émincées</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">10</span><span class="ingredient-name">feuilles de sauge (ou menthe)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">25 g</span><span class="ingredient-name">poudre de noisettes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">échalote finement émincée</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">jaune d'œuf</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Dans un robot (lame en S), mixer finement le poulet avec l'huile, le sel et le jaune d'œuf.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Ajouter les autres ingrédients et mixer par à-coups de façon homogène.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Huiler les mains, former des boulettes avec 1 c.à.c. de chair. Disposer sur plaque.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Badigeonner d'huile d'olive. Enfourner 15 min à 200°C. Servir avec yaourt grec, citron, sel &amp; poivre.</div></div>
+</div></div>
+</div><div class="subsection-label"><span>Poissons</span></div><div class="recipe" id="carpaccio-saumon" data-tags="salade carpaccio poisson saumon gingembre citron vert" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson cru</span>
+  <h3 class="recipe-title">Carpaccio de saumon au gingembre</h3>
+  <p class="recipe-subtitle">Fines lamelles de saumon au jus de citron vert et gingembre râpé</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 25 min + 30 min congélation</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">400 g</span><span class="ingredient-name">saumon (pavé ou filet)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2–4 cm</span><span class="ingredient-name">gingembre frais râpé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">sauce soja douce (à part)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">sel</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Placer le saumon 30 min au congélateur. Couper en très fines lamelles. Disposer dans les assiettes.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Saupoudrer de gingembre râpé, arroser de citron vert et d'huile d'olive. Saler.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Servir avec la sauce soja en accompagnement, que chacun dose à sa guise.</div></div>
+</div></div>
+<div class="recipe-note">💡 L'assaisonnement se prête parfaitement à un riz, dégusté avec des baguettes.</div>
+</div><div class="recipe" id="saumon-curry" data-tags="salade poisson saumon curry marinade poivrons avocat" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Poisson mariné</span>
+  <h3 class="recipe-title">Saumon mariné au curry</h3>
+  <p class="recipe-subtitle">Saumon gravlax au curry, poivrons rôtis et avocat</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">🌙</span> 1 nuit + 2 h réfrig.</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">600 g</span><span class="ingredient-name">filet de saumon</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">sucre + 4 c.à.s. gros sel</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">poivrons rouges</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">tomate, 1 avocat</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">curry</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">citron non traité</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">aneth, piment de Cayenne, ciboulette</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">La veille : recouvrir le saumon de gros sel, sucre et poivre. Réfrigérer 1 nuit.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Griller les poivrons 20 min côté peau, enfermer 30 min dans un sac, peler. Couper en lamelles, réfrigérer.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Mélanger jus et zeste de citron, curry, ciboulette, Cayenne, aneth, sel et poivre. Verser sur poivrons et tomate.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Rincer le saumon, couper en dés, mariner 2 h au frais. Ajouter l'avocat coupé au service.</div></div>
+</div></div>
+</div><div class="subsection-label"><span>Végétarien</span></div><div class="recipe" id="nouilles-cajou" data-tags="plat vegetarien veg tofu nouilles riz cajou brocoli carotte poivron gingembre sauce soja" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Végétarien</span>
+  <h3 class="recipe-title">Nouilles sautées aux noix de cajou</h3>
+  <p class="recipe-subtitle">Tofu mariné, légumes croquants et sauce cajou citronnée au sriracha, sauté au wok</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 20 min prép.</div>
+  <div class="badge"><span class="badge-icon">🌿</span> 10 min marinade</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 15 min cuisson</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">300 g</span><span class="ingredient-name">nouilles de riz séchées</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">160 g</span><span class="ingredient-name">tofu ferme</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ tête</span><span class="ingredient-name">brocoli</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">carotte</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">poivron rouge</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">oignons nouveaux</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 gousse</span><span class="ingredient-name">ail râpée</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">gingembre frais râpé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 poignée</span><span class="ingredient-name">noix de cajou</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">huile de tournesol</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">sauce soja sucrée (marinade)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">coriandre fraîche</span></div>
+  <div class="ingredients-title" style="margin-top:12px">Sauce cajou</div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">gingembre frais râpé</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">purée de noix de cajou (ou sésame)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">sriracha</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 c.à.s.</span><span class="ingredient-name">sauce soja</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">huile de sésame toasté</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Cuire les nouilles de riz selon le paquet. Rincer à l'eau froide et égoutter.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Égoutter le tofu, couper en bâtonnets. Mélanger avec le gingembre, l'ail et la sauce soja sucrée. Laisser mariner 10 min.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Préparer les légumes : brocoli en bouquets, carotte en fins bâtonnets, poivron en lanières, oignons émincés, coriandre ciselée.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Préparer la sauce cajou en mélangeant tous ses ingrédients dans un bol.</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-text">Dans un wok, faire brunir les noix de cajou à feu vif avec l'huile. Réserver sur une assiette, laisser l'huile dans le wok.</div></div>
+  <div class="step"><div class="step-num">6</div><div class="step-text">Faire revenir le tofu 2 min à feu vif en remuant. Ajouter le poivron, la carotte et le brocoli. Poursuivre 6 min.</div></div>
+  <div class="step"><div class="step-num">7</div><div class="step-text">Arroser de la moitié de la sauce cajou. Ajouter les nouilles et les oignons. Sauter 1 min. Verser le reste de sauce, mélanger.</div></div>
+  <div class="step"><div class="step-num">8</div><div class="step-text">Parsemer de coriandre ciselée et de noix de cajou grillées. Servir aussitôt.</div></div>
+</div></div>
+</div><div class="recipe" id="terrine-shiitakes" data-tags="plat vegetarien veg terrine lentilles shiitake champignons chia noisettes cajou grand nombre" data-diet="veg gf" data-crowd="8">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-plat">Plat · Végétarien</span>
+  <h3 class="recipe-title">Terrine végétale aux shiitakés</h3>
+  <p class="recipe-subtitle">Lentilles, shiitakés, noisettes et cajou, liée au gel de chia</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span><span class="diet-badge diet-crowd">👨‍👩‍👧‍👦 6–8 pers.</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 6–8 personnes</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 40 min à 180°C</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">200 g</span><span class="ingredient-name">lentilles vertes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">400 g</span><span class="ingredient-name">champignons shiitakés</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">3</span><span class="ingredient-name">échalotes</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">80 g</span><span class="ingredient-name">noisettes + 80 g cajou</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">50 g</span><span class="ingredient-name">farine de pois chiche</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">tamari</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">4-épices, muscade, sel, poivre</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Cuire les lentilles 40 min à petits bouillons. Écraser grossièrement à la fourchette.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Hydrater le chia dans 80 ml d'eau pendant 20 min. Faire revenir les shiitakés 15–20 min, hacher finement.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Mixer grossièrement échalotes, noisettes et cajous. Mélanger tout avec lentilles, champignons, épices, tamari et gel de chia.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">Incorporer la farine de pois chiche. Tasser dans moule chemisé. Cuire à 180°C pendant 40 min.</div></div>
+</div></div>
+<div class="recipe-note">💡 En ramequins individuels, réduire la cuisson à 25 min environ.</div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-desserts" id="ch-VI">
+  <div class="category-header">
+    <span class="section-label">Chapitre VI</span>
+    <div class="category-number">VI</div>
+    <h2 class="category-title">Desserts &amp;<br>douceurs</h2>
+    <p class="category-desc">Légèreté et inventivité — souvent sans sucre ajouté ni beurre.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="recipe" id="confiture-poires" data-tags="dessert vegetarien veg confiture poires chia gingembre rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien · Rapide</span>
+  <h3 class="recipe-title">Confiture de poires (presque) sans sucre</h3>
+  <p class="recipe-subtitle">Prête en 5 min, épaissie au chia, légère et parfumée au gingembre</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">🫙</span> 1 pot</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 5 min prép.</div>
+  <div class="badge"><span class="badge-icon">🗓</span> 5 jours conservation</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">600 g</span><span class="ingredient-name">poires bien mûres</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1–2 c.à.s.</span><span class="ingredient-name">sirop d'agave</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">jus de citron</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ c.à.c.</span><span class="ingredient-name">pulpe de gingembre frais</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 pincées</span><span class="ingredient-name">extrait de vanille en poudre</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Éplucher les poires, couper en morceaux. Cuire avec agave, citron, gingembre et vanille 5 min à feu moyen.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Mixer selon le résultat souhaité. Ajouter le chia, mélanger, verser dans un pot.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Laisser refroidir en mélangeant de temps en temps. Réfrigérer et consommer sous 5 jours.</div></div>
+</div></div>
+<div class="recipe-note">💡 En été, remplacer par des fraises ou framboises, et les épices par des fleurs de lavande séchées.</div>
+</div><div class="recipe" id="clementine-curd" data-tags="dessert vegetarien veg clementine curd chia amande rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien</span>
+  <h3 class="recipe-title">Clémentine curd sans œufs ni casserole</h3>
+  <p class="recipe-subtitle">Curd 100% végétal à la clémentine entière et à la purée d'amande</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">🫙</span> 1 pot</div>
+  <div class="badge"><span class="badge-icon">🗓</span> 5 jours</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">30 g</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 grosses</span><span class="ingredient-name">clémentines (ou 3 petites)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">30 g</span><span class="ingredient-name">purée d'amande blanche</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1,5 c.à.s.</span><span class="ingredient-name">sirop d'agave</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Mélanger le chia avec 90 ml d'eau. Laisser prendre 15 min.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Peler les clémentines en retirant la pellicule blanche. Ouvrir les quartiers, ôter pépins et filaments.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Mixer longuement avec le gel de chia, la purée d'amande et le sirop d'agave. Réfrigérer.</div></div>
+</div></div>
+<div class="recipe-note">💡 Délicieux aussi avec des citrons bergamote (jan.–mars) ou des oranges sanguines.</div>
+</div><div class="recipe" id="cookies" data-tags="dessert vegetarien veg cookies chocolat noisette chia" data-diet="veg gf" data-crowd="12">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien</span>
+  <h3 class="recipe-title">Cookies américains noisette et chocolat</h3>
+  <p class="recipe-subtitle">Fondants dedans, croustillants dehors — sans œufs ni beurre, liés au chia</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span><span class="diet-badge diet-crowd">👨‍👩‍👧‍👦 ~12 cookies</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">🍪</span> ~12 cookies</div>
+  <div class="badge"><span class="badge-icon">🔥</span> 12 min à 200°C</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">graines de chia (bombée)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">100 g</span><span class="ingredient-name">farine de riz complet</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">50 g</span><span class="ingredient-name">farine de teff (ou sarrasin)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">70 g</span><span class="ingredient-name">sucre intégral</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">60 g</span><span class="ingredient-name">purée de noisette</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">40 ml</span><span class="ingredient-name">huile d'olive + lait d'amande</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">60 g</span><span class="ingredient-name">chocolat noir (pépites)</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Préchauffer à 200°C. Moudre le chia, mélanger avec 40 ml d'eau, laisser reposer 10 min.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Mélanger farines, sucre et sel. Ajouter purée de noisette, huile, lait d'amande et gel de chia. Incorporer le chocolat.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Former des galettes, disposer sur plaque sulfurisée. Cuire 12 min. Laisser tiédir avant de déguster.</div></div>
+</div></div>
+</div><div class="recipe" id="framboises-verveine" data-tags="dessert vegetarien veg framboises verveine vanille cannelle" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien</span>
+  <h3 class="recipe-title">Framboises à la verveine</h3>
+  <p class="recipe-subtitle">Framboises marinées dans un sirop léger à la vanille et à la verveine</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 15 min + 2 h réfrigération</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">500 g</span><span class="ingredient-name">framboises</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">50 cl</span><span class="ingredient-name">eau</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">100 g</span><span class="ingredient-name">sucre roux</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">gousses de vanille fendues</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">bâton de cannelle</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 poignée</span><span class="ingredient-name">feuilles de verveine</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">citron (jus)</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Porter à ébullition l'eau, le sucre, la vanille et la cannelle. Arrêter après 5 min, jeter la verveine. Infuser 5 min. Laisser refroidir.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Réfrigérer 1 h. Retirer la vanille, la cannelle et la verveine. Filtrer le sirop.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Ajouter les framboises au sirop, remettre 1 h au réfrigérateur. Ajouter le jus de citron au service. Répartir dans des coupelles.</div></div>
+</div></div>
+<div class="recipe-note">💡 Variante : remplacer les framboises par des pêches et ajouter des framboises au moment de servir.</div>
+</div><div class="recipe" id="carpaccio-pommes" data-tags="dessert vegetarien veg pommes chevre miel pignons citron" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-dessert">Dessert · Végétarien</span>
+  <h3 class="recipe-title">Carpaccio de pommes au chèvre</h3>
+  <p class="recipe-subtitle">Lamelles de pomme rouge, chèvre frais, pignons grillés et miel tiède</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 20 min prép.</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">5</span><span class="ingredient-name">pommes rouges</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">fromages de chèvre frais</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">100 g</span><span class="ingredient-name">pignons de pin</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">10 c.à.s.</span><span class="ingredient-name">miel liquide</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">citrons (jus)</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Couper les pommes en fines lamelles (avec la peau). Arroser de jus de citron pour éviter le noircissement.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Faire griller les pignons dans une poêle antiadhésive sans cesser de remuer. Couper le chèvre en tranches fines.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Dresser pommes et chèvre dans les assiettes. Chauffer le miel à feu doux et verser. Parsemer de pignons. Servir aussitôt.</div></div>
+</div></div>
+</div>
+  </div>
+</div>
+<div class="cat-section cat-boissons" id="ch-VII">
+  <div class="category-header">
+    <span class="section-label">Chapitre VII</span>
+    <div class="category-number">VII</div>
+    <h2 class="category-title">Boissons &amp;<br>sauces</h2>
+    <p class="category-desc">Les bases indispensables, du cocktail péruvien aux sauces vives.</p>
+  </div>
+  <div class="recipe-wrapper">
+<div class="subsection-label"><span>Boissons</span></div><div class="recipe" id="chia-fresca" data-tags="boisson vegetarien veg chia citron agave limonade rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-boisson">Boisson · Végétarien</span>
+  <h3 class="recipe-title">Chia fresca</h3>
+  <p class="recipe-subtitle">La limonade traditionnelle mexicaine aux graines de chia</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 1 verre</div>
+  <div class="badge"><span class="badge-icon">⚡</span> 15 min</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">10 g</span><span class="ingredient-name">graines de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">30 ml</span><span class="ingredient-name">jus de citron (½ citron)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">sirop d'agave</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">250 ml</span><span class="ingredient-name">eau fraîche</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">glaçons</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Faire tremper le chia dans 250 ml d'eau fraîche pendant 5 min en remuant régulièrement.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Ajouter le citron et l'agave. Agiter vivement. Attendre encore 10 min en remuant. Ajouter les glaçons et déguster.</div></div>
+</div></div>
+<div class="recipe-note">💡 Variantes : framboises écrasées, jus de gingembre, eau de coco ou menthe + curcuma.</div>
+</div><div class="recipe" id="supergreen" data-tags="boisson smoothie vegetarien veg kiwi epinards spiruline eau de coco chia rapide" data-diet="veg gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-boisson">Smoothie · Végétarien</span>
+  <h3 class="recipe-title">Supergreen smoothie</h3>
+  <p class="recipe-subtitle">Kiwi, épinards et eau de coco liés par le chia — onctueux et revitalisant</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 1 verre</div>
+  <div class="badge"><span class="badge-icon">⚡</span> 10 min</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.s.</span><span class="ingredient-name">graines de chia (rase)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">200 ml</span><span class="ingredient-name">eau de coco</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">kiwis bien mûrs</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 poignée</span><span class="ingredient-name">pousses d'épinards</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1–2 c.à.c.</span><span class="ingredient-name">spiruline (facultatif)</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Mélanger le chia avec 40 ml d'eau de coco, attendre 5 min.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Mixer longuement avec le reste de l'eau de coco, les kiwis, les épinards et la spiruline. Servir frais.</div></div>
+</div></div>
+<div class="recipe-note">💡 En été : fruits rouges ou abricots à la place des kiwis, acérola à la place de la spiruline.</div>
+</div><div class="recipe" id="pisco-sour" data-tags="boisson cocktail pisco citron rapide" data-diet="gf" data-crowd="1">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-boisson">Cocktail · Péruvien</span>
+  <h3 class="recipe-title">Pisco sour</h3>
+  <p class="recipe-subtitle">Le cocktail national péruvien — pisco, citron vert et blanc d'œuf</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">🍹</span> 1 cocktail</div>
+  <div class="badge"><span class="badge-icon">⚡</span> 5 min</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">7 cl</span><span class="ingredient-name">pisco</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">5 cl</span><span class="ingredient-name">jus de citron vert</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">3 cl</span><span class="ingredient-name">sirop de sucre de canne</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">blanc d'œuf</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">4</span><span class="ingredient-name">glaçons</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">quelques gouttes angostura bitter</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Verser tous les ingrédients dans un shaker. Shaker très fort pendant 1 minute.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Servir dans un verre préalablement refroidi. Ajouter 3–4 gouttes d'angostura bitter en finition.</div></div>
+</div></div>
+</div><div class="subsection-label"><span>Sauces &amp; bases</span></div><div class="recipe" id="leche-tigre" data-tags="sauce base ceviche citron ail gingembre piment peruvien" data-diet="gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-boisson">Base · Ceviche</span>
+  <h3 class="recipe-title">Lèche de tigre</h3>
+  <p class="recipe-subtitle">La marinade fondatrice de tous les ceviches péruviens</p>
+  <div class="recipe-diet-icons"></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 4 personnes</div>
+  <div class="badge"><span class="badge-icon">⏱</span> 10 min + 30 min marinade</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">10</span><span class="ingredient-name">citrons verts (jus)</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">gousse d'ail</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">2 cm</span><span class="ingredient-name">gingembre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">purée de piments rocoto ou aji limo</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ c.à.c.</span><span class="ingredient-name">sel fin</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 pincée</span><span class="ingredient-name">poivre noir</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Presser les citrons verts. Ajouter l'ail et le gingembre finement coupés.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Ajouter sel, poivre et purée de piments. Filtrer avec un chinois si désiré.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Ajouter le poisson ou du fumet de poisson. Laisser mariner environ 30 min.</div></div>
+</div></div>
+<div class="recipe-note">💡 Le "lait de tigre" tire son nom de la couleur blanche de la marinade au contact du poisson. Les Péruviens le boivent parfois tel quel !</div>
+</div><div class="recipe" id="vinaigrette-chia" data-tags="sauce vinaigrette vegetarien veg chia agrumes citron orange agave rapide" data-diet="veg gf" data-crowd="2">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-boisson">Sauce · Végétarien</span>
+  <h3 class="recipe-title">Vinaigrette sans huile aux agrumes (chia)</h3>
+  <p class="recipe-subtitle">Le gel de chia remplace l'huile comme émulsifiant — légère et acidulée</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> 2 personnes</div>
+  <div class="badge"><span class="badge-icon">⚡</span> 5 min</div>
+  <div class="badge"><span class="badge-icon">🗓</span> 48 h conservation</div>
+</div></div>
+<div class="recipe-body"><div class="recipe-ingredients">
+  <div class="ingredients-title">Ingrédients</div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 petite c.à.c.</span><span class="ingredient-name">gel de chia</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ orange</span><span class="ingredient-name">jus d'orange</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">jus de citron</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ c.à.c.</span><span class="ingredient-name">sirop d'agave</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">½ c.à.c.</span><span class="ingredient-name">vinaigre de cidre</span></div>
+  <div class="ingredient-item"><span class="ingredient-qty">1 pincée</span><span class="ingredient-name">sel</span></div>
+</div><div class="recipe-steps">
+  <div class="steps-title">Préparation</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Mixer longuement tous les ingrédients jusqu'à obtenir une sauce bien homogène.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Conserver au réfrigérateur et consommer dans les 48 heures. Préférer les graines blanches pour l'esthétique.</div></div>
+</div></div>
+</div><div class="recipe" id="tapenades-pesto" data-tags="sauce base vegetarien veg aubergine caviar zaatar citron pesto basilic parmesan pignons salsa tomates jalapeno coriandre rapide" data-diet="veg gf" data-crowd="4">
+<div class="recipe-header"><div class="recipe-meta-top">
+  <span class="recipe-tag tag-entree">Recettes de base · Végétarien</span>
+  <h3 class="recipe-title">Tapenades &amp; pesto</h3>
+  <p class="recipe-subtitle">Trois sauces fraîches : caviar d'aubergine au zaatar, pesto de basilic et salsa mexicaine</p>
+  <div class="recipe-diet-icons"><span class="diet-badge diet-veg">🌿 Végétarien</span></div>
+</div><div class="recipe-badges">
+  <div class="badge"><span class="badge-icon">👥</span> ~15–20 cl chacun</div>
+  <div class="badge"><span class="badge-icon">⚡</span> 5–20 min</div>
+  <div class="badge"><span class="badge-icon">🗓</span> Se conservent 1–3 jours</div>
+</div></div>
+
+<div class="recipe-body" style="grid-template-columns:1fr;">
+<div class="recipe-steps" style="padding:24px 40px;">
+  <div class="steps-title">① Caviar d'aubergine au zaatar — prép. 10 min · cuisson 20 min · repos 1 h · ~20 cl</div>
+
+  <div style="display:grid;grid-template-columns:200px 1fr;gap:0;margin:0 -40px 24px;border-top:1px solid var(--light-gray);border-bottom:1px solid var(--light-gray);">
+    <div style="padding:16px 20px 16px 40px;background:var(--cream);border-right:1px solid var(--light-gray);">
+      <div class="ingredients-title">Ingrédients</div>
+      <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">aubergine coupée en deux</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">1 gousse</span><span class="ingredient-name">ail râpée</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">½ citron</span><span class="ingredient-name">zeste et jus</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">1 c.à.c.</span><span class="ingredient-name">zaatar</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">graines de grenade (facultatif)</span></div>
+    </div>
+    <div style="padding:16px 40px 16px 24px;">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Préchauffer le four à 180°C. Mélanger le zaatar avec ½ c.à.s. d'huile. Badigeonner les demi-aubergines (côté peau sur le dessus). Enfourner 20 min.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Récupérer la pulpe. La déposer dans un bol avec tous les autres ingrédients. Écraser à la fourchette et mélanger.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Laisser reposer au réfrigérateur au moins 1 heure. Décorer de graines de grenade avant de servir.</div></div>
+    </div>
+  </div>
+
+  <div class="steps-title">② Pesto de basilic — prép. 5 min · ~15 cl</div>
+
+  <div style="display:grid;grid-template-columns:200px 1fr;gap:0;margin:0 -40px 24px;border-top:1px solid var(--light-gray);border-bottom:1px solid var(--light-gray);">
+    <div style="padding:16px 20px 16px 40px;background:var(--cream);border-right:1px solid var(--light-gray);">
+      <div class="ingredients-title">Ingrédients</div>
+      <div class="ingredient-item"><span class="ingredient-qty">1 bouquet</span><span class="ingredient-name">basilic frais</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">5 cl</span><span class="ingredient-name">huile d'olive</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">1 gousse</span><span class="ingredient-name">ail</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">15 g</span><span class="ingredient-name">pignons de pin</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">50 g</span><span class="ingredient-name">parmesan râpé</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">—</span><span class="ingredient-name">sel, poivre du moulin</span></div>
+    </div>
+    <div style="padding:16px 40px 16px 24px;">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Effeuiller le basilic. Passer l'ensemble des ingrédients au mixeur jusqu'à obtenir une texture lisse.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Se conserve environ 3 jours au réfrigérateur (filmer au contact pour éviter l'oxydation).</div></div>
+    </div>
+  </div>
+
+  <div class="steps-title">③ Salsa — prép. 5 min · repos 1 h · ~15 cl</div>
+
+  <div style="display:grid;grid-template-columns:200px 1fr;gap:0;margin:0 -40px;border-top:1px solid var(--light-gray);">
+    <div style="padding:16px 20px 16px 40px;background:var(--cream);border-right:1px solid var(--light-gray);">
+      <div class="ingredients-title">Ingrédients</div>
+      <div class="ingredient-item"><span class="ingredient-qty">2</span><span class="ingredient-name">tomates</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">oignon rouge</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">½</span><span class="ingredient-name">piment vert jalapeño</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">1 gousse</span><span class="ingredient-name">ail râpée</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">8 brins</span><span class="ingredient-name">coriandre</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">1</span><span class="ingredient-name">citron vert (jus)</span></div>
+      <div class="ingredient-item"><span class="ingredient-qty">2 c.à.s.</span><span class="ingredient-name">huile d'olive</span></div>
+    </div>
+    <div style="padding:16px 40px 16px 24px;">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Couper les tomates en petits dés. Émincer finement l'oignon rouge. Retirer les graines du piment, hacher la chair. Ciseler la coriandre.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Mélanger tous les ingrédients dans un bol. Laisser reposer au réfrigérateur au moins 1 heure avant de déguster.</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+  </div>
+</div>
+<!-- NO RESULTS -->
+<div class="no-results" id="noResults">
+  <div class="no-results-icon">🍽</div>
+  <p class="no-results-text">Aucune recette ne correspond à votre recherche.</p>
+</div>
+
+<!-- 4ÈME DE COUVERTURE -->
+<div class="back-cover">
+  <p class="back-cover-text">« La cuisine est l'art de transformer des produits simples en moments inoubliables. »</p>
+  <div class="back-cover-line"></div>
+  <div class="back-cover-sig">Ma Collection de Recettes · 2026</div>
+</div>
+
+<!-- FAB -->
+<button class="back-toc-btn" id="backTocBtn" onclick="scrollToToc()" aria-label="Retour à la table des matières">
+  ☰ Table des matières
+</button>
+
+<script>
+const searchInput = document.getElementById('searchInput');
+const pills = document.querySelectorAll('.pill');
+const allRecipes = document.querySelectorAll('.recipe');
+const resultsCount = document.getElementById('resultsCount');
+const noResults = document.getElementById('noResults');
+const catSections = document.querySelectorAll('.cat-section');
+const dynToc = document.getElementById('dynToc');
+const dynTocList = document.getElementById('dynTocList');
+const dynTocTitle = document.getElementById('dynTocTitle');
+const staticToc = document.getElementById('toc');
+const searchSection = document.getElementById('searchSection');
+let activeFilter = 'all';
+let searchTerm = '';
+
+function normalize(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ');
+}
+
+function recipeMatchesFilter(r, f){
+  if(f==='all') return true;
+  const diet=r.dataset.diet||'', tags=r.dataset.tags||'', crowd=parseInt(r.dataset.crowd)||0;
+  if(f==='veg')     return diet.includes('veg');
+  if(f==='crowd')   return crowd>=6;
+  if(f==='petitdej')return tags.includes('petit-dejeuner');
+  if(f==='tarte')   return tags.includes('tarte')||tags.includes('quiche');
+  if(f==='salade')  return tags.includes('salade')||tags.includes('ceviche')||tags.includes('carpaccio');
+  if(f==='soupe')   return tags.includes('soupe')||tags.includes('veloute');
+  if(f==='plat')    return tags.includes('plat');
+  if(f==='dessert') return tags.includes('dessert');
+  if(f==='boisson') return tags.includes('boisson');
+  if(f==='rapide')  return tags.includes('rapide');
+  return true;
+}
+
+function recipeMatchesSearch(r, term){
+  if(!term) return true;
+  const t=normalize(r.dataset.tags||'');
+  const title=normalize(r.querySelector('.recipe-title')?r.querySelector('.recipe-title').textContent:'');
+  const ings=Array.from(r.querySelectorAll('.ingredient-name')).map(e=>e.textContent).join(' ');
+  const combined=t+' '+title+' '+normalize(ings);
+  return term.split(' ').filter(Boolean).every(w=>combined.includes(w));
+}
+
+function getCatLabel(r){
+  const s=r.closest('.cat-section');
+  if(!s) return '';
+  if(s.classList.contains('cat-petitdej')) return 'Petit-déj.';
+  if(s.classList.contains('cat-tartes'))   return 'Tarte';
+  if(s.classList.contains('cat-salades'))  return 'Salade';
+  if(s.classList.contains('cat-soupes'))   return 'Soupe';
+  if(s.classList.contains('cat-plats'))    return 'Plat';
+  if(s.classList.contains('cat-desserts')) return 'Dessert';
+  if(s.classList.contains('cat-boissons')) return 'Boisson';
+  return '';
+}
+
+function getDietBadges(r){
+  const diet=r.dataset.diet||'', tags=r.dataset.tags||'', crowd=parseInt(r.dataset.crowd)||0;
+  let o='';
+  if(diet.includes('veg')) o+='\uD83C\uDF3F ';
+  if(tags.includes('rapide')) o+='\u26A1';
+  if(crowd>=6) o+='\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66';
+  return o.trim();
+}
+
+function buildDynToc(visible){
+  dynTocList.innerHTML='';
+  if(!visible.length){dynTocList.innerHTML='<span style="font-size:13px;color:var(--mid-gray);font-style:italic">Aucune recette trouvée.</span>';return;}
+  visible.forEach(r=>{
+    const title=r.querySelector('.recipe-title')?r.querySelector('.recipe-title').textContent.replace(/\n/g,' ').trim():'';
+    const a=document.createElement('a');
+    a.className='dyn-toc-link'; a.href='#'+r.id;
+    a.innerHTML='<span class="dyn-cat">'+getCatLabel(r)+'</span><span style="flex:1">'+title+'</span><span class="dyn-badges">'+getDietBadges(r)+'</span>';
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      const target=document.getElementById(r.id);
+      if(target){const off=searchSection.offsetHeight+dynToc.offsetHeight+8;window.scrollTo({top:target.getBoundingClientRect().top+window.scrollY-off,behavior:'smooth'});}
+    });
+    dynTocList.appendChild(a);
+  });
+}
+
+function getFilterLabel(){
+  const p=document.querySelector('.pill.active');
+  return(!p||p.dataset.filter==='all')?null:p.textContent.trim();
+}
+
+function runSearch(){
+  const term=normalize(searchTerm.trim());
+  let visible=[];
+  allRecipes.forEach(r=>{
+    const show=recipeMatchesFilter(r,activeFilter)&&recipeMatchesSearch(r,term);
+    r.classList.toggle('hidden',!show);
+    if(show) visible.push(r);
+  });
+  catSections.forEach(s=>{s.style.display=s.querySelectorAll('.recipe:not(.hidden)').length>0?'':'none';});
+  const searching=searchTerm.trim()||activeFilter!=='all';
+  staticToc.style.display=searching?'none':'';
+  if(searching){
+    dynToc.classList.add('visible');
+    let lbl='';
+    if(searchTerm.trim()&&getFilterLabel()) lbl='"'+searchTerm.trim()+'" \u00B7 '+getFilterLabel();
+    else if(searchTerm.trim()) lbl='Recherche\u00A0: "'+searchTerm.trim()+'"';
+    else lbl=getFilterLabel()||'Recettes filtr\u00E9es';
+    dynTocTitle.textContent=visible.length+' recette'+(visible.length!==1?'s':'')+'\u2002\u2014\u2002'+lbl;
+    buildDynToc(visible);
+  } else {
+    dynToc.classList.remove('visible');
+    dynTocList.innerHTML='';
+  }
+  resultsCount.style.display=searching?'block':'none';
+  if(searching) resultsCount.textContent=visible.length===0?'Aucune recette trouv\u00E9e':visible.length+' recette'+(visible.length!==1?'s':'')+' trouv\u00E9e'+(visible.length!==1?'s':'');
+  noResults.style.display=visible.length===0&&searching?'block':'none';
+  document.querySelector('.back-cover').style.display=(visible.length===0&&searching)?'none':'';
+}
+
+searchInput.addEventListener('input',e=>{searchTerm=e.target.value;runSearch();});
+pills.forEach(p=>p.addEventListener('click',()=>{
+  pills.forEach(x=>x.classList.remove('active'));
+  p.classList.add('active'); activeFilter=p.dataset.filter; runSearch();
+}));
+document.querySelector('[data-filter="all"]').classList.add('active');
+
+function toggleSearch(){
+  const exp=document.getElementById('searchExpanded');
+  const arrow=document.getElementById('searchArrow');
+  const toggle=document.getElementById('searchToggle');
+  const open=!exp.classList.contains('visible');
+  exp.classList.toggle('visible',open);
+  arrow.classList.toggle('open',open);
+  toggle.setAttribute('aria-expanded',String(open));
+  if(open) setTimeout(()=>searchInput.focus(),80);
+}
+
+function clearSearch(){
+  searchInput.value=''; searchTerm='';
+  pills.forEach(x=>x.classList.remove('active'));
+  document.querySelector('[data-filter="all"]').classList.add('active');
+  activeFilter='all'; runSearch();
+}
+
+function scrollToToc(){
+  if(searchTerm||activeFilter!=='all'){
+    clearSearch();
+    const exp=document.getElementById('searchExpanded');
+    const arrow=document.getElementById('searchArrow');
+    const toggle=document.getElementById('searchToggle');
+    if(exp.classList.contains('visible')){
+      exp.classList.remove('visible'); arrow.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+    }
+  }
+  setTimeout(()=>{
+    const off=searchSection.offsetHeight+8;
+    window.scrollTo({top:staticToc.getBoundingClientRect().top+window.scrollY-off,behavior:'smooth'});
+  },50);
+}
+
+const backBtn=document.getElementById('backTocBtn');
+window.addEventListener('scroll',()=>{
+  const show=window.scrollY>300;
+  backBtn.style.opacity=show?'1':'0';
+  backBtn.style.pointerEvents=show?'auto':'none';
+},{passive:true});
+backBtn.style.transition='opacity .3s ease,transform .2s ease,background .2s ease';
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  if(a.classList.contains('dyn-toc-link')) return;
+  a.addEventListener('click',function(e){
+    e.preventDefault();
+    const target=document.querySelector(this.getAttribute('href'));
+    if(target){
+      const off=searchSection.offsetHeight+8;
+      window.scrollTo({top:target.getBoundingClientRect().top+window.scrollY-off,behavior:'smooth'});
+    }
+  });
+});
+</script>
+</body>
+</html>
