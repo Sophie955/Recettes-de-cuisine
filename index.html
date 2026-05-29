@@ -27,79 +27,26 @@
 
   header {
     background: #faf6ef;
-    border-top: 1px solid rgba(26,18,8,0.12);
-    border-bottom: 1px solid rgba(26,18,8,0.12);
+    border-bottom: 1px solid var(--border);
     position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: stretch;
+    padding: 1rem 1.5rem 1rem 2rem;
   }
   header::before {
     content: '';
     position: absolute;
     left: 0; top: 0; bottom: 0;
-    width: 5px;
+    width: 4px;
     background: var(--dark);
-  }
-  .header-main {
-    flex: 1;
-    padding: 1.8rem 2rem 1.6rem 2.8rem;
-  }
-  .header-label {
-    font-family: 'Lato', sans-serif;
-    font-weight: 400;
-    font-size: 0.62rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.6rem;
   }
   header h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-size: clamp(1.4rem, 4vw, 2rem);
     font-weight: 700;
     letter-spacing: 0.01em;
-    line-height: 1.1;
+    line-height: 1;
     color: var(--dark);
-    margin-bottom: 0.3rem;
   }
   header h1 em { font-style: italic; color: var(--gold); }
-  .header-sub {
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 0.6rem;
-  }
-  .header-divider {
-    width: 1px;
-    background: var(--border);
-    margin: 1.8rem 0;
-    align-self: stretch;
-  }
-  .header-count-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1.8rem 2rem;
-    min-width: 90px;
-  }
-  .header-count {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--dark);
-    line-height: 1;
-  }
-  .header-count-label {
-    font-family: 'Lato', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 0.3rem;
-  }
 
   .search-section {
     background: var(--warm-white); border-bottom: 1px solid var(--border);
@@ -270,16 +217,7 @@
 <body>
 
 <header>
-  <div class="header-main">
-    <div class="header-label">Collection personnelle · 2026</div>
-    <h1>Mon Livre de <em>Cuisine</em></h1>
-    <div class="header-sub">Recettes végétales · Poissons · Volaille · Douceurs</div>
-  </div>
-  <div class="header-divider"></div>
-  <div class="header-count-block">
-    <div class="header-count" id="header-count"></div>
-    <div class="header-count-label">recettes</div>
-  </div>
+  <h1>Mon Livre de <em>Cuisine</em></h1>
 </header>
 
 <div class="search-section">
@@ -651,7 +589,7 @@ function closeModal() {
 function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-document.getElementById('header-count').textContent = RECIPES.length;
+
 render();
 </script>
 </body>
