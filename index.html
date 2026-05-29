@@ -26,18 +26,80 @@
   body { background: var(--cream); color: var(--dark); font-family: 'Lato', sans-serif; font-weight: 300; min-height: 100vh; }
 
   header {
-    background: var(--dark); color: var(--cream);
-    padding: 2.5rem 2rem 2rem; text-align: center; position: relative; overflow: hidden;
+    background: #faf6ef;
+    border-top: 1px solid rgba(26,18,8,0.12);
+    border-bottom: 1px solid rgba(26,18,8,0.12);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
   }
   header::before {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(201,146,74,0.04) 20px, rgba(201,146,74,0.04) 21px);
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--dark);
   }
-  .header-label { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
-  header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: 0.02em; line-height: 1; margin-bottom: 0.5rem; }
+  .header-main {
+    flex: 1;
+    padding: 1.8rem 2rem 1.6rem 2.8rem;
+  }
+  .header-label {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    font-size: 0.62rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    color: var(--dark);
+    margin-bottom: 0.3rem;
+  }
   header h1 em { font-style: italic; color: var(--gold); }
-  .header-sub { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; }
-  .header-count { display: inline-block; margin-top: 1.2rem; font-size: 0.75rem; color: rgba(250,246,239,0.5); letter-spacing: 0.1em; }
+  .header-sub {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.6rem;
+  }
+  .header-divider {
+    width: 1px;
+    background: var(--border);
+    margin: 1.8rem 0;
+    align-self: stretch;
+  }
+  .header-count-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.8rem 2rem;
+    min-width: 90px;
+  }
+  .header-count {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .header-count-label {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
 
   .search-section {
     background: var(--warm-white); border-bottom: 1px solid var(--border);
@@ -208,10 +270,16 @@
 <body>
 
 <header>
-  <div class="header-label">Collection personnelle · 2026</div>
-  <h1>Mon Livre de <em>Cuisine</em></h1>
-  <div class="header-sub">Recettes végétales · Poissons · Volaille · Douceurs</div>
-  <div class="header-count" id="header-count"></div>
+  <div class="header-main">
+    <div class="header-label">Collection personnelle · 2026</div>
+    <h1>Mon Livre de <em>Cuisine</em></h1>
+    <div class="header-sub">Recettes végétales · Poissons · Volaille · Douceurs</div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-count-block">
+    <div class="header-count" id="header-count"></div>
+    <div class="header-count-label">recettes</div>
+  </div>
 </header>
 
 <div class="search-section">
@@ -398,6 +466,66 @@ function filterRecipes() {
   });
 }
 
+// ── Stemming français basique ──────────────────────────────────
+
+
+// ── Distance de Levenshtein ────────────────────────────────────
+
+
+// ── Score d'un mot dans la liste de tokens ─────────────────────
+
+
+function filterRecipes() {
+  return RECIPES.filter(r => {
+    if (activeChapter && r.chapter_name !== activeChapter) return false;
+    if (activeFilter !== 'all' && !r.tags.includes(activeFilter)) return false;
+    if (searchQuery) {
+      const haystack = normalize([r.title, r.subtitle, ...r.ingredients, ...r.steps].join(' '));
+      const tokens = haystack.split(/[^a-z0-9]+/).filter(t => t.length >= 2);
+      const words = normalize(searchQuery).trim().split(/\s+/).filter(Boolean);
+      return words.every(w => wordScore(w, tokens) > 0);
+    }
+    return true;
+  });
+}
+
+// ── Distance de Levenshtein (max 2) ────────────────────────────
+
+
+// ── Score de pertinence d'un mot dans un texte ─────────────────
+function wordMatchScore(word, haystackTokens) {
+  const stemW = stem(word);
+  const len = word.length;
+  // 1. Correspondance exacte
+  if (haystackTokens.some(t => t === word)) return 3;
+  // 2. Correspondance après stemming
+  if (haystackTokens.some(t => stem(t) === stemW)) return 2;
+  // 3. Levenshtein — tolérance selon longueur du mot
+  const maxDist = len <= 4 ? 0 : len <= 7 ? 1 : 2;
+  if (maxDist > 0 && haystackTokens.some(t => levenshtein(word, t) <= maxDist)) return 1;
+  // 4. Correspondance partielle (le mot contient un token ou vice versa)
+  if (len >= 4 && haystackTokens.some(t => t.length >= 4 && (t.includes(word) || word.includes(t)))) return 1;
+  return 0;
+}
+
+// ── Tokeniser un texte ─────────────────────────────────────────
+
+
+function filterRecipes() {
+  return RECIPES.filter(r => {
+    if (activeChapter && r.chapter_name !== activeChapter) return false;
+    if (activeFilter !== 'all' && !r.tags.includes(activeFilter)) return false;
+    if (searchQuery) {
+      const haystack = [r.title, r.subtitle, ...r.ingredients, ...r.steps].join(' ');
+      const tokens = tokenize(haystack);
+      const words = searchQuery.trim().split(/\s+/).filter(Boolean);
+      // Chaque mot de la recherche doit avoir un score > 0
+      return words.every(w => wordMatchScore(w, tokens) > 0);
+    }
+    return true;
+  });
+}
+
 function esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -523,7 +651,7 @@ function closeModal() {
 function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-document.getElementById('header-count').textContent = RECIPES.length + ' recettes';
+document.getElementById('header-count').textContent = RECIPES.length;
 render();
 </script>
 </body>
