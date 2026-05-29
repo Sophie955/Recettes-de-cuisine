@@ -29,7 +29,7 @@
     background: #faf6ef;
     border-bottom: 1px solid var(--border);
     position: relative;
-    padding: 1rem 1.5rem 1rem 2rem;
+    padding: 0.9rem 1.5rem 0.9rem 2rem;
   }
   header::before {
     content: '';
@@ -47,6 +47,7 @@
     color: var(--dark);
   }
   header h1 em { font-style: italic; color: var(--gold); }
+  .header-count { display: none; }
 
   .search-section {
     background: var(--warm-white); border-bottom: 1px solid var(--border);
@@ -392,17 +393,8 @@ function resetAll() {
   render();
 }
 
-function filterRecipes() {
-  return RECIPES.filter(r => {
-    if (activeChapter && r.chapter_name !== activeChapter) return false;
-    if (activeFilter !== 'all' && !r.tags.includes(activeFilter)) return false;
-    if (searchQuery) {
-      const haystack = [r.title, r.subtitle, ...r.ingredients, ...r.steps].join(' ').toLowerCase();
-      return searchQuery.split(/\s+/).filter(Boolean).every(w => haystack.includes(w));
-    }
-    return true;
-  });
-}
+// ── Normalisation ────────────────────────────────────────────
+
 
 // ── Stemming français basique ──────────────────────────────────
 
@@ -418,17 +410,40 @@ function filterRecipes() {
     if (activeChapter && r.chapter_name !== activeChapter) return false;
     if (activeFilter !== 'all' && !r.tags.includes(activeFilter)) return false;
     if (searchQuery) {
-      const haystack = normalize([r.title, r.subtitle, ...r.ingredients, ...r.steps].join(' '));
-      const tokens = haystack.split(/[^a-z0-9]+/).filter(t => t.length >= 2);
-      const words = normalize(searchQuery).trim().split(/\s+/).filter(Boolean);
-      return words.every(w => wordScore(w, tokens) > 0);
+      const words = searchQuery.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      return words.every(w => {
+        const inTitle    = (r.title + ' ' + (r.subtitle||'')).toLowerCase().includes(w);
+        const inIngr     = r.ingredients.filter(i => i.toLowerCase().includes(w)).length;
+        const inSteps    = r.steps.filter(s => s.toLowerCase().includes(w)).length;
+        // Mot trouvé dans le titre/sous-titre → match direct
+        if (inTitle) return true;
+        // Mot trouvé dans les ingrédients : au moins 2 occurrences, ou 1 occurrence dans un ingrédient principal (pas optionnel)
+        if (inIngr >= 2) return true;
+        if (inIngr === 1) {
+          const mainIngr = r.ingredients.filter(i => !i.toLowerCase().includes('optionnel') && !i.toLowerCase().includes('facultatif') && !i.toLowerCase().includes('à défaut') && !i.toLowerCase().includes('ou '));
+          if (mainIngr.some(i => i.toLowerCase().includes(w))) return true;
+        }
+        // Mot trouvé dans les étapes : au moins 2 occurrences
+        if (inSteps >= 2) return true;
+        return false;
+      });
     }
     return true;
   });
 }
 
 // ── Distance de Levenshtein (max 2) ────────────────────────────
-
+function levenshtein(a, b) {
+  if (Math.abs(a.length - b.length) > 2) return 99;
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_, i) => [i, ...Array(n).fill(0)]);
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
+}
 
 // ── Score de pertinence d'un mot dans un texte ─────────────────
 function wordMatchScore(word, haystackTokens) {
@@ -449,20 +464,7 @@ function wordMatchScore(word, haystackTokens) {
 // ── Tokeniser un texte ─────────────────────────────────────────
 
 
-function filterRecipes() {
-  return RECIPES.filter(r => {
-    if (activeChapter && r.chapter_name !== activeChapter) return false;
-    if (activeFilter !== 'all' && !r.tags.includes(activeFilter)) return false;
-    if (searchQuery) {
-      const haystack = [r.title, r.subtitle, ...r.ingredients, ...r.steps].join(' ');
-      const tokens = tokenize(haystack);
-      const words = searchQuery.trim().split(/\s+/).filter(Boolean);
-      // Chaque mot de la recherche doit avoir un score > 0
-      return words.every(w => wordMatchScore(w, tokens) > 0);
-    }
-    return true;
-  });
-}
+
 
 function esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -589,7 +591,7 @@ function closeModal() {
 function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-
+// header-count removed
 render();
 </script>
 </body>
