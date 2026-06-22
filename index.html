@@ -241,6 +241,25 @@
     margin-bottom: 0.5rem;
   }
 
+  .share-bar {
+    display: flex;
+    gap: 0.6rem;
+    padding: 1.2rem 2rem;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .share-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: 'Lato', sans-serif; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.4rem 0.9rem; border-radius: 2px; border: 1.5px solid var(--border);
+    background: var(--warm-white); color: var(--muted);
+    cursor: pointer; text-decoration: none; transition: all 0.15s;
+  }
+  .share-btn:hover { border-color: var(--gold); color: var(--dark); }
+  .share-btn.whatsapp:hover { border-color: #25D366; color: #25D366; }
+  .share-btn.email:hover { border-color: var(--brown); color: var(--brown); }
+
   mark { background: rgba(201,146,74,0.3); color: inherit; padding: 0.05em 0.1em; border-radius: 1px; }
 
   @media (max-width: 600px) {
@@ -321,6 +340,11 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="modal-body"></div>
+    <div class="share-bar">
+      <span style="font-family:'Lato',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);align-self:center;">Partager :</span>
+      <a id="share-whatsapp" class="share-btn whatsapp" target="_blank" href="#">💬 WhatsApp</a>
+      <a id="share-email" class="share-btn email" href="#">✉️ Email</a>
+    </div>
   </div>
 </div>
 
@@ -680,6 +704,17 @@ function openModal(idx) {
       <div class="modal-section-title">Préparation</div>
       <ol class="steps-list">${stepsHtml}</ol>`;
   }
+
+  // Partage — lien vers le livre
+  const siteUrl = 'https://sophie955.github.io/Recettes-de-cuisine/';
+  const shareText = '🍽️ ' + r.title + '\n\nRetrouve cette recette dans mon livre de cuisine en ligne :\n' + siteUrl;
+  const emailBody = 'Bonjour,\n\nJe voulais te partager cette recette : ' + r.title + '\n\nRetrouve-la dans mon livre de cuisine en ligne :\n' + siteUrl + '\n\nBonne cuisine !';
+
+  const waLink = document.getElementById('share-whatsapp');
+  if (waLink) waLink.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+
+  const emailLink = document.getElementById('share-email');
+  if (emailLink) emailLink.href = 'mailto:?subject=' + encodeURIComponent('Recette : ' + r.title) + '&body=' + encodeURIComponent(emailBody);
 
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
